@@ -14,7 +14,8 @@ spec:
       hostPath:
         path: "/var/lib/kuard"
   containers:
-    - image: gcr.io/kuar-demo/kuard-amd64:1
+    - image: gcr.io/kuar-demo/kuard-amd64:3
+    #- image: docker.io/tomcat
       name: kuard2
       ports:
         - containerPort: 8080
@@ -33,6 +34,14 @@ spec:
         timeoutSeconds: 1
         periodSeconds: 10
         failureThreshold: 3
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: 8080
+        periodSeconds: 2
+        initialDelaySeconds: 0
+        failureThreshold: 3
+        successThreshold: 1
       # resources
       resources:
         requests:
