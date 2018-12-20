@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ping
+spec:
+  template:
+    spec:
+      containers:
+      - name: ping
+        image: alpine
+        command: ["ping",  "-c10", "localhost"]
+      restartPolicy: Never
+  backoffLimit: 4
