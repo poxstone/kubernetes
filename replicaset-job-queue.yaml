@@ -1,13 +1,18 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
+  name: work-queue
   labels:
     app: work-queue
     component: queue
     chapter: jobs
-  name: work-queue
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: queue
+    matchExpressions:
+      - {key: component, operator: In, values: [queue]}
   template:
     metadata:
       # for select from service
