@@ -75,4 +75,11 @@ kubectl port-forward kuard-tls 8443:8443 8080:8080;
 
 # get browser https://localhost:8443 (invalid cert)
 curl -k https://localhost:8443;
+
+###
+# save credentials for user docker image
+kubectl create secret docker-registry my-image-pull-secret --docker-username=username --docker-password=password --docker-email=email@domain.com:
+
+# create pod with credentials previously created
+kubectl create -f kuard-secret-ips.yaml;
 ```
