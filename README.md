@@ -79,6 +79,8 @@ curl -k https://localhost:8443;
 ###
 # save credentials for user docker image
 kubectl create secret docker-registry my-image-pull-secret --docker-username=username --docker-password=password --docker-email=email@domain.com:
+# or create with file
+#kubectl create -f my-config.yaml;
 
 # create pod with credentials previously created
 kubectl create -f kuard-secret-ips.yaml;
