@@ -55,3 +55,24 @@ kubectl create -f kuard-config.yaml;
 
 ```
 
+## deploy secrets and secrets volumes
+
+```bash
+# create
+cd secrets;
+
+# create secret from files
+kubectl create secret generic kuard-tls --from-file=kuard.crt --from-file=kuard.key;
+
+# describe upload secrets
+kubectl describe secrets kuard-tls;
+
+# create pod for get certs secrets
+kubectl create -f kuard-secret.yaml;
+
+# create proxy ports
+kubectl port-forward kuard-tls 8443:8443 8080:8080;
+
+# get browser https://localhost:8443 (invalid cert)
+curl -k https://localhost:8443;
+```
