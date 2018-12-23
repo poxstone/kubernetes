@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    #deployment.kubernetes.io/revision: "1"
+    kubernetes.io/change-cause: "Update nginx to 1.13.2"
+  labels:
+    run: nginx
+  name: nginx
+  namespace: default
+spec:
+  replicas: 2
+  # limit rollbacks history saved
+  revisionHistoryLimit: 14
+  # Deployment waits deconds after a Pod become healthy
+  minReadySeconds: 30
+  # limit time for Deployment is healthy, after this time Deply is market as failed
+  progressDeadlineSeconds: 60
+  selector:
+    matchLabels:
+      run: nginx
+  strategy:
+    rollingUpdate:
+      # if is 100% is equivalent to blue/green
+      maxSurge: 1
+      #max pods unavaiilable on update (number o %)
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:
+      containers:
+      - image: docker.io/nginx:1.13.2
+        imagePullPolicy: Always
+        name: nginx
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+

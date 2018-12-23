@@ -85,3 +85,22 @@ kubectl create secret docker-registry my-image-pull-secret --docker-username=use
 # create pod with credentials previously created
 kubectl create -f kuard-secret-ips.yaml;
 ```
+
+## deployments
+
+```bash
+cd deployments;
+
+# deploy
+kubectl create -f nginx-deployment.yaml;
+
+# edit deployment version container and apply/replace/create again
+# see the deployments versions
+kubectl rollout history deployment nginx;
+
+# dettails deploiments (remove --revision param for list)
+kubectl rollout history deployment nginx --revision=1;
+
+# get to preious deployment (rollback)
+kubectl rollout undo deployment nginx --to-revision=3;
+```
