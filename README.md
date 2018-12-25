@@ -149,6 +149,28 @@ kubectl rollout undo deployment nginx --to-revision=3;
 
 ## Integrations storage DB
 ```bash
+# create nfs gcp and configure ip and directory in nfs-volume.yaml;
+
+# deploy
+kubectl create -f nfs-volume.yaml;
+kubectl create -f nfs-volume-claim.yaml;
+kubectl create -f mysql-replicaset.yaml;
+
+# Comprobe replicaset
+kubectl get rs --selector "app=mysql";
+
+# expone service
+kubectl create -f mysql-service.yaml;
 
 ```
+## Storage class
+[storage class doc](https://kubernetes.io/docs/concepts/storage/storage-classes/#azure-disk)
 
+```bash
+cd integration-storage;
+kubectl create -f storageclass.yaml;
+kubectl create -f dynamic-volume-claim.yaml;
+
+# you can select disk type, like ssd
+
+```

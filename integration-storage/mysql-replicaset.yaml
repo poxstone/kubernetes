@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: mysql
+  # Labels so that we can bind a Service to this Pod
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: database
+        image: mysql
+        resources:
+          requests:
+            #cpu: 1
+            #memory: 1Gi
+            cpu: 100m
+            memory: 200Mi
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: some-password-here
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+          - name: database
+            mountPath: "/var/lib/mysql"
+      volumes:
+      - name: database
+
+
+
