@@ -1,17 +1,18 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kuard-nfs-pod
+  name: kuard-mydisk-pod
 spec:
   containers:
-  - name: kuard-nfs
+  - name: kuard-mydisk
     image: gcr.io/kuar-demo/kuard-amd64:3
     volumeMounts:
-    - mountPath: "/nfs-data"
-      name: nfspvc
+    - mountPath: "/mydisk-data"
+      name: my-disk
   volumes:
-  - name: nfspvc
+  - name: my-disk
     persistentVolumeClaim:
-      claimName: nfserver-claim
+      # DiskClaim to load
+      claimName: mydisk
       readOnly: false
 

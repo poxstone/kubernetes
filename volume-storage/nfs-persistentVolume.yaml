@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: fileserver
+  name: nfserver
   labels:
-    volume: my-volume
+    volume: nfserver
 spec:
   capacity:
     storage: 2Gi
@@ -11,5 +11,5 @@ spec:
   - ReadWriteMany 
   nfs:
     path: "/share"
-    server: 10.173.231.34
+    server: 10.173.231.2
 

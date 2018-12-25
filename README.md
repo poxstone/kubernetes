@@ -18,7 +18,28 @@ pod_name=$(kubectl get pods -l app="work-queue,component=queue" -o jsonpath='{.i
 kubectl port-forward $pod_name 8080:8080;
 ```
 
+## deploy volume storage
+
+```bash
+cd volume-storage;
+
+# deploy volume
+kubectl create -f mydisk-persistentVolumeClaim.yaml;
+
+# deploy pod volume
+kubectl create -f kuard-mydisk-pod.yaml;
+
+# mount pod port forward local 8080
+kubectl port-forward kuard-mydisk-pod 8080:8080
+
+# get volumes
+curl -X GET "http://localhost:8080/fs/mydisk-data/"
+```
 ## deploy nfs storage
+
+> **NOTE:** metadata.name for PersistentVolume and PersistentVolumeClaim is not important.
+> The important thing is that the deployments are made simultanously once.
+> The main deifference between a disk and a nfs in claim deployment file is "storageClassName" parameters.
 
 ```bash
 cd volume-storage;
@@ -125,3 +146,9 @@ kubectl rollout history deployment nginx --revision=1;
 # get to preious deployment (rollback)
 kubectl rollout undo deployment nginx --to-revision=3;
 ```
+
+## Integrations storage DB
+```bash
+
+```
+

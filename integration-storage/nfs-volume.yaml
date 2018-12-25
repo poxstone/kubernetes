@@ -11,5 +11,5 @@ spec:
   - ReadWriteMany 
   nfs:
     path: "/share"
-    server: 10.173.231.34
+    server: 10.173.231.2
 

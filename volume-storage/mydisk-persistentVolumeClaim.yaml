@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nfserver-claim
+  name: mydisk
 spec:
   accessModes:
-  - ReadWriteMany
-  storageClassName: ""
+  - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 1Gi
 
