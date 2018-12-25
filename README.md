@@ -18,6 +18,27 @@ pod_name=$(kubectl get pods -l app="work-queue,component=queue" -o jsonpath='{.i
 kubectl port-forward $pod_name 8080:8080;
 ```
 
+## deploy nfs storage
+
+```bash
+cd volume-storage;
+
+# deploy nfs volume
+kubectl create -f nfs-persistentVolume.yaml;
+
+# deploy nfc claim for previous nfs volume
+kubectl create -f nfs-persistentVolumeClaim.yaml;
+
+# deploy nfs pod kuard
+kubectl create -f kuard-nfs-pod.yaml;
+
+# mount pod port forward local 8080
+kubectl port-forward kuard-nfs-pod 8080:8080
+
+# get volumes
+curl -X GET "http://localhost:8080/fs/nfs-data/"
+```
+
 ## deploy jobs
 
 ```bash

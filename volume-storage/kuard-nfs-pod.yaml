@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kuard-nfs-pod
+spec:
+  containers:
+  - name: kuard2
+    image: gcr.io/kuar-demo/kuard-amd64:3
+    volumeMounts:
+    - mountPath: "/nfs-data"
+      name: nfspvc
+  volumes:
+  - name: nfspvc
+    persistentVolumeClaim:
+      claimName: fileserver-claim
+      readOnly: false
+

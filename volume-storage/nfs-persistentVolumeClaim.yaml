@@ -5,8 +5,8 @@ metadata:
 spec:
   accessModes:
   - ReadWriteMany
-  storageClassName: "slow"
+  storageClassName: ""
   resources:
     requests:
-      storage: fileserver
+      storage: 2Gi
 
