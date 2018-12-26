@@ -174,3 +174,35 @@ kubectl create -f dynamic-volume-claim.yaml;
 # you can select disk type, like ssd
 
 ```
+
+## mogo integration
+
+### mongo simple
+
+```bash
+# get directory
+cd integration-storage/mongo_statefulSets/;
+
+# create statefullSet and service;
+kubectl create -f mongo-simple.yaml -f mongo-service.yaml;
+
+# init mongo with replica set master (mongo-0)
+kubectl exec -it mongo-0 mongo;
+# set resplica mongo
+rs.initiate({_id: "rs0", members: [ { _id: 0, host: "mongo-0.mongo:27017"} ]});;
+# set
+rs.add("mongo-1.mongo:27017");
+rs.add("mongo-2.mongo:27017");
+
+```
+
+### mongo complete
+
+```bash
+# get directory
+cd integration-storage/mongo_statefulSets/;
+
+# create statefullSet and service;
+kubectl create -f mongo-config-map.yaml -f mongo-service.yaml -f mongo.yaml;
+```
+
