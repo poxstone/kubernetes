@@ -206,3 +206,20 @@ cd integration-storage/mongo_statefulSets/;
 kubectl create -f mongo-config-map.yaml -f mongo-service.yaml -f mongo.yaml;
 ```
 
+## Real application
+
+> **Note:** Loging in Docker `docker loging`. 
+
+- Parse server is a parser for mongodb, use express.
+
+```bash
+cd real_application;
+
+# build docker (nodejs + parse server)
+docker build ${DOCKER_USER}/parse-server ./pares-server/;
+
+# build
+docker push ${DOCKER_USER}/parse-server;
+
+```
+
