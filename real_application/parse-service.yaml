@@ -1,25 +1,13 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
   name: parse-server
-  mamespace: default
+  namespace: default
 spec:
-  replcas: 1
-  template:
-    metadata:
-      labels:
-        run: parse-server
-    spec:
-      containers:
-      - name: parse-server
-        image: poxstone/parse-server
-        env:
-        - name: DATABASE_URI
-          value: "mongodb://mongo-0.mongo:27017,\
-                  mongo-1.mongo:27017,\
-                  mongo-2.mongo:27017,/dev?replicaSet=rs0"
-        - name: APP_ID
-          value: my-app-id
-        - name: MASTER_KEY
-          value: my-master-key
+  ports:
+  - port: 1337
+    protocol: TCP
+    targetPort: 1337
+  selector:
+    run: parse-server
 
