@@ -254,3 +254,14 @@ show tables;
 
 ```
 
+### redis
+
+```bash
+cd real_application/redis;
+
+kubectl create configmap --from-file="slave.conf=./slave.conf" --from-file="maste.conf=./master.conf" --from-file="sentinel.conf=./sentinel.conf" --from-file="init.sh=./init.sh" --from-file="sentinel.sh=./sentinel.sh" redis-conf;
+
+kubectl apply -f redis-service.yaml;
+kubectl apply -f redis.yaml;
+```
+
