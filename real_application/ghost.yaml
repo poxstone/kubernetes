@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ghost
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      run: ghost
+  template:
+    metadata:
+      labels:
+        run: ghost
+    spec:
+      containers: 
+        - image: "ghost"
+          name: "ghost"
+          # MYSQL
+          env:
+            - name: database__client
+              value: mysql
+            - name: database__connection__host
+              value: mysql
+            - name: database__connection__user
+              value: MY_USER
+            - name: database__connection__password
+              value: MY_PASSWORD
+            - name: database__connection__database
+              value: MY_DATABASE
+          
+          volumeMounts:
+            - mountPath: /ghost-config
+              name: config
+          ports:
+            - containerPort: 2368
+              name: http
+              protocol: TCP
+      volumes:
+        - name: config
+          configMap:
+            defaultMode: 420
+            name: ghost-config
+

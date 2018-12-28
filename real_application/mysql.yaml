@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      run: mysql
+  template:
+    metadata:
+      labels:
+        run: mysql
+    spec:
+      containers: 
+        - image: "mysql:5.7"
+          name: "mysql"
+          env:
+            - name: MYSQL_USER
+              value: MY_USER
+            - name: MYSQL_PASSWORD
+              value: MY_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
+              value: MY_PASSWORD
+            - name: MYSQL_DATABASE
+              value: MY_DATABASE
+          ports:
+            - containerPort: 3306
+              name: http
+              protocol: TCP
+

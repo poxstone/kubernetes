@@ -221,5 +221,36 @@ docker build ${DOCKER_USER}/parse-server ./pares-server/;
 # build
 docker push ${DOCKER_USER}/parse-server;
 
+# run mongo service;
+kubectl apply -f ../integration-storage/mongo_statefulSets/mongo-config-map.yaml;
+kubectl apply -f ../integration-storage/mongo_statefulSets/mongo-service.yaml;
+kubectl apply -f ../integration-storage/mongo_statefulSets/mongo.yaml;
+
+# run parse-app
+kubectl apply -f parse.yaml;
+kubectl apply -f parse-service.yaml;
+
+# deploy mysql
+kubectl apply -f real_application/mysql.yaml;
+kubectl apply -f real_application/mysql-service.yaml;
+
+# deploy ghost (forum app) (cm is not in use but is called by ghost.yaml)
+kubectl create cm --from-file ghost-config.js ghost-config;
+kubectl apply -f real_application/ghost.yaml;
+
+# expose ports
+kubectl expose deployments ghost --port=2368;
+
+# get service in browser to:
+curl -X GET "http://localhost:8001/api/v1/namespaces/default/services/ghost/proxy/";
+
+# validate databases
+kubectl exec -it mysql-74c95db464-qthmx bash;
+
+# in container
+mysql -u MY_USER -pMY_PASSWORD;
+use MY_DATABASE;
+show tables;
+
 ```
 
