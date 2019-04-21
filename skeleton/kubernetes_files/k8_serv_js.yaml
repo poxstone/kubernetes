@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8-serv-js-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: k8-serv-js-pod
+  template:
+    metadata:
+      labels:
+        app: k8-serv-js-pod
+    spec:
+      containers: 
+      - image: "gcr.io/xst-dev-001/k8_serv_js:v0.0.01"
+      #- image: "poxstone/k8_serv_js:v0.0.01"
+        name: k8-serv-js-container
+        env:
+        - name: APP_PORT
+          value: '3000'
+        - name: DB_HOST
+          value: 'k8-cloudsql-external-service'
+        - name: DB_USER
+          value: 'my_db_user'
+        - name: DB_PASS
+          value: 'my_db_secret'
+        - name: DB_SCHE
+          value: 'items'
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP

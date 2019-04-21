@@ -1,7 +1,10 @@
 .idea/*
 .vscode/*
 virtual_env/*
+misql-db/*
+node_modules/*
 lib/*
 *.ws[mnop]
 *.__*
 *.pyc
+package-lock.json

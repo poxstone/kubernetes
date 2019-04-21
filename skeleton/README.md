@@ -10,6 +10,7 @@ docker-compose up;
 ```bash
 PROJECT='';
 VERSION='v0.0.1f';
+VERSION_JS='v0.0.01';
 CLUSTER='dev-cluster';
 ```
 
@@ -23,6 +24,7 @@ gcloud container clusters get-credentials "${CLUSTER}" --project "${PROJECT}";
 ```
 
 ## 4. Deploy images gcr.io
+### 4.1 Deploy py
 ```bash
 # change tags name
 docker tag "poxstone/k8_app_py:${VERSION}" "gcr.io/${PROJECT}/k8_app_py:${VERSION}";
@@ -34,9 +36,21 @@ gcloud auth configure-docker -q;
 docker push "gcr.io/${PROJECT}/k8_app_py:${VERSION}";
 ```
 
-## 5. Deploy to GKE
+### 4.2 Deploy js
 ```bash
+# change tags name
+docker tag "poxstone/k8_serv_js:${VERSION_JS}" "gcr.io/${PROJECT}/k8_serv_js:${VERSION_JS}";
 
+# docker login
+gcloud auth configure-docker -q;
+
+# deploy image
+docker push "gcr.io/${PROJECT}/k8_serv_js:${VERSION_JS}";
+```
+
+## 5. Deploy to GKE
+### 5.1 Deploy py
+```bash
 # deploy 
 kubectl apply -f kubernetes_files/k8_app_py.yaml;
 
@@ -45,7 +59,21 @@ kubectl apply -f kubernetes_files/k8_app_py_service.yaml;
 
 # deploy scaling - if you want create replication scaling apply hpa
 kubectl apply -f kubernetes_files/k8_app_py_hpa.yaml;
+```
 
+### 5.1 Deploy js
+> **Note**: Change internal ip in "k8_cloudsql_external_endpoint.yaml" fo cloudsql service
+
+```bash
+# deploy 
+kubectl apply -f kubernetes_files/k8_serv_js.yaml;
+
+# deploy service
+kubectl apply -f kubernetes_files/k8_serv_js_service.yaml;
+
+# deploy endpoints/service  external
+kubectl apply -f kubernetes_files/k8_cloudsql_external_service.yaml;
+kubectl apply -f kubernetes_files/k8_cloudsql_external_endpoint.yaml;
 ```
 
 ## a. Utils

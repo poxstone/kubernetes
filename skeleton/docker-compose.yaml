@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  web:
+  k8_app_py:
     image: poxstone/k8_app_py:v0.0.1f
     build:
       context: ./k8_app_py/
@@ -12,3 +12,35 @@ services:
     - VERSION_DEP=v0.0.1f
     ports:
     - "8080:5000"
+  k8_serv_js:
+    image: poxstone/k8_serv_js:v0.0.01
+    build:
+      context: ./k8_serv_js/
+    environment:
+    - APP_PORT=3000
+    - APP_PATH=/home/node/app
+    - DB_HOST=my_db_host
+    - DB_USER=my_db_user
+    - DB_PASS=my_db_secret
+    - DB_SCHE=items
+    - USER=node
+    ports:
+    - "8000:3000"
+    #links:
+      # TODO: link borked
+    #- my_db_host:my_db_host
+  #my_db_host:
+  #  image: "mysql:5.7"
+  #  environment:
+  #  - MYSQL_USER=my_db_user
+  #  - MYSQL_PASSWORD=my_db_secret
+  #  - MYSQL_DATABASE=items
+  #  - MYSQL_ROOT_PASSWORD=my_db_secret
+  #  ports:
+  #  - "3306:3306"
+  #  expose:
+  #  - '3306'
+  #  volumes:
+  #  - ./mysql-db:/var/lib/mysql
+
+    

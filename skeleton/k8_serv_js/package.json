@@ -1,0 +1,19 @@
+{
+  "name": "k8_serv_js",
+  "version": "0.0.01",
+  "description": "simple sql db service",
+  "main": "index.js",
+  "engines": {
+    "node": ">=8.15.1",
+    "npm": ">=6.4.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "oscar ortiz - poxstone@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "mysql": "^2.17.1"
+  }
+}
