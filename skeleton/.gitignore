@@ -1,0 +1,7 @@
+.idea/*
+.vscode/*
+virtual_env/*
+lib/*
+*.ws[mnop]
+*.__*
+*.pyc

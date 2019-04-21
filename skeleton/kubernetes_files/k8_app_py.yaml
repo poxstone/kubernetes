@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8-app-py-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: k8-app-py-pod
+  template:
+    metadata:
+      labels:
+        app: k8-app-py-pod
+    spec:
+      containers: 
+      - image: "gcr.io/xst-dev-001/k8_app_py:v0.0.1f"
+      #- image: "poxstone/k8_app_py:v0.0.1f"
+        name: k8-app-py-container
+        env:
+        - name: APP_PORT
+          value: '5000'
+        - name: WORKERS
+          value: '1'
+        - name: TIMEOUT
+          value: '120'
+        - name: VERSION_DEP
+          value: 'v0.0.1f'
+        ports:
+        - containerPort: 5000
+          name: http
+          protocol: TCP

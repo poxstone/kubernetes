@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  web:
+    image: poxstone/k8_app_py:v0.0.1f
+    build:
+      context: ./k8_app_py/
+    environment:
+    - APP_PORT=5000
+    - WORKERS=3 
+    - TIMEOUT=120
+    - VERSION_DEP=v0.0.1f
+    ports:
+    - "8080:5000"
