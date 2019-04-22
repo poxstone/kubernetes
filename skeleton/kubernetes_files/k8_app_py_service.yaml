@@ -3,13 +3,18 @@ kind: Service
 metadata:
   name: k8-app-py-service
   namespace: default
+  labels:
+    app: k8-app-py-pod
+  annotations:
+    #cloud.google.com/neg: '{"ingress": true}'
+    beta.cloud.google.com/backend-config: '{"ports": {"8080":"k8-app-ingress-backendconfig"}}'
 spec:
+  type: NodePort
+  #type: LoadBalancer
+  #loadBalancerIP: "34.73.160.140"
   ports:
   - port: 8080
     protocol: TCP
     targetPort: 5000
-  #type: NodePort
-  type: LoadBalancer
-  #loadBalancerIP: "34.73.160.140"
   selector:
     app: k8-app-py-pod

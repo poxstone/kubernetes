@@ -1,0 +1,11 @@
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  name: k8-app-ingress-backendconfig
+spec:
+  timeoutSec: 120
+  connectionDraining:
+    drainingTimeoutSec: 60
+  #sessionAffinity:
+  #  affinityType: "GENERATED_COOKIE"
+  #  affinityCookieTtlSec: 50

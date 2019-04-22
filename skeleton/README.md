@@ -118,6 +118,15 @@ kubectl apply -f kubernetes_files/kubernetes_files/k8_app_ingress.yaml;
 ```
 > Note: Crate Register A to External IP 
 
+#### 6.1.0 Deploy backend (optional)
+> If you want change timeout LoadBalancer interconnection, you will have that implements backend config "k8_app_ingress_backendconfig.yaml" and add anotations in each service "k8_app_py_service.yaml"
+```bash
+# deploy ingress
+kubectl apply -f kubernetes_files/kubernetes_files/k8_app_ingress_backendconfig.yaml;
+# re-deploy service
+kubectl apply -f kubernetes_files/kubernetes_files/k8_app_py_service.yaml;
+```
+
 ### 6.2 Create certs let's encrypt
 ```bash
 # create alias command
@@ -219,7 +228,7 @@ poxstone@localhost:skeleton$ for i in {1..220};do curl "http://${IP_EXTERNAL}:80
 ```bash
 # start
 minikube start;
-
+ 
 # stop
 minikube stop;
 ```

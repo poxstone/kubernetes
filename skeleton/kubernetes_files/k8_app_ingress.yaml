@@ -2,6 +2,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: k8-app-ingress
+  #annotations:
+  #  kubernetes.io/ingress.global-static-ip-name: my-name-address
+
 spec:
   #tls:
   #- hosts:
