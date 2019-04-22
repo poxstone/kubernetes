@@ -14,8 +14,8 @@ spec:
         app: k8-serv-js-pod
     spec:
       containers: 
-      - image: "gcr.io/xst-dev-001/k8_serv_js:v0.0.01"
-      #- image: "poxstone/k8_serv_js:v0.0.01"
+      - image: "gcr.io/xst-dev-001/k8_serv_js:vj.0.0.1a"
+      #- image: "poxstone/k8_serv_js:vj.0.0.1a"
         name: k8-serv-js-container
         env:
         - name: APP_PORT

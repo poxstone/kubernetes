@@ -14,10 +14,10 @@ python main.py;
 ## Docker run
 ```bash
 # build
-docker build -t poxstone/k8_app_py:v0.0.1f ./;
+docker build -t poxstone/k8_app_py:vp.0.0.1a ./;
 
 # run
-docker run -it --rm --name k8_app_py -p 8080:5000 -e APP_PORT=5000 -e WORKERS=3 -e TIMEOUT=120 -e VERSION_DEP='v0.0.1f' poxstone/k8_app_py:v0.0.1f;
+docker run -it --rm --name k8_app_py -p 8080:5000 -e APP_PORT=5000 -e WORKERS=3 -e TIMEOUT=120 -e VERSION_DEP='vp.0.0.1a' poxstone/k8_app_py:vp.0.0.1a;
 
 # stop
 docker rm -f k8_app_py;

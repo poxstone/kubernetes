@@ -8,7 +8,7 @@ ENV GUNICORN_USER='user_gun'
 ENV APP_PATH='/app'
 ENV WORKERS=3 
 ENV TIMEOUT=120
-ENV VERSION_DEP='v0.0.1f'
+ENV VERSION_DEP='vp.0.0.1a'
 
 RUN apk add --no-cache python3 \
     && python3 -m ensurepip \

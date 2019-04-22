@@ -2,45 +2,60 @@ version: '3'
 
 services:
   k8_app_py:
-    image: poxstone/k8_app_py:v0.0.1f
+    image: poxstone/k8_app_py:vp.0.0.1a
     build:
       context: ./k8_app_py/
     environment:
     - APP_PORT=5000
     - WORKERS=3 
     - TIMEOUT=120
-    - VERSION_DEP=v0.0.1f
+    - VERSION_DEP=vp.0.0.1a
     ports:
     - "8080:5000"
+    
   k8_serv_js:
-    image: poxstone/k8_serv_js:v0.0.01
+    image: poxstone/k8_serv_js:vj.0.0.1a
     build:
       context: ./k8_serv_js/
     environment:
     - APP_PORT=3000
-    - APP_PATH=/home/node/app
     - DB_HOST=my_db_host
     - DB_USER=my_db_user
     - DB_PASS=my_db_secret
     - DB_SCHE=items
     - USER=node
     ports:
-    - "8000:3000"
-    #links:
-      # TODO: link borked
-    #- my_db_host:my_db_host
-  #my_db_host:
-  #  image: "mysql:5.7"
-  #  environment:
-  #  - MYSQL_USER=my_db_user
-  #  - MYSQL_PASSWORD=my_db_secret
-  #  - MYSQL_DATABASE=items
-  #  - MYSQL_ROOT_PASSWORD=my_db_secret
-  #  ports:
-  #  - "3306:3306"
-  #  expose:
-  #  - '3306'
-  #  volumes:
-  #  - ./mysql-db:/var/lib/mysql
+    - "8081:3000"
+    depends_on:
+    - my_db_host
+    # TODO: link borked
+    links:
+    - my_db_host:my_db_host
 
-    
+  my_db_host:
+    image: "mysql:5.7"
+    environment:
+    - MYSQL_USER=my_db_user
+    - MYSQL_PASSWORD=my_db_secret
+    - MYSQL_DATABASE=items
+    - MYSQL_ROOT_PASSWORD=my_db_secret
+    ports:
+    - "3306:3306"
+    expose:
+    - '3306'
+    volumes:
+    - ./mysql-db:/var/lib/mysql
+
+  k8-letsencrypt-res-deployment:
+    image: poxstone/k8_letsencrypt_res:vl.0.0.1a
+    build:
+      context: ./k8_letsencrypt_res
+    environment:
+    - APP_PORT=8000
+    - RESPONSE=test_response
+    ports:
+    - "8001:8000"
+
+  #inspecter:
+  #  image: booyaabes/kali-linux-full:latest
+  #  command: ["ping", "0.0.0.0"]

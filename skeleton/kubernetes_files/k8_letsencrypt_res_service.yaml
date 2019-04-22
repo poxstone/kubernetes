@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: k8-serv-js-service
+  name: k8-letsencrypt-res-service
   namespace: default
 spec:
   ports:
   - port: 8080
     protocol: TCP
-    targetPort: 3000
+    targetPort: 8000
   #type: NodePort
   type: LoadBalancer
   selector:
-    app: k8-serv-js-pod
+    app: k8-letsencrypt-res-pod

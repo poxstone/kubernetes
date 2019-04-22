@@ -14,8 +14,8 @@ spec:
         app: k8-app-py-pod
     spec:
       containers: 
-      - image: "gcr.io/xst-dev-001/k8_app_py:v0.0.1f"
-      #- image: "poxstone/k8_app_py:v0.0.1f"
+      - image: "gcr.io/xst-dev-001/k8_app_py:vp.0.0.1a"
+      #- image: "poxstone/k8_app_py:vp.0.0.1a"
         name: k8-app-py-container
         env:
         - name: APP_PORT
@@ -25,7 +25,7 @@ spec:
         - name: TIMEOUT
           value: '120'
         - name: VERSION_DEP
-          value: 'v0.0.1f'
+          value: 'vp.0.0.1a'
         ports:
         - containerPort: 5000
           name: http

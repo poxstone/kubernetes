@@ -12,7 +12,7 @@ npm start;
 ## 2. Run Build/Docker
 ```bash
 # build
-docker build -t poxstone/k8_serv_js:v0.0.01 ./;
+docker build -t poxstone/k8_serv_js:vj.0.0.1a ./;
 
 # run ---net required for external connection
 docker run --rm -it --name k8_serv_js --net host -p 3000:3000 \
@@ -21,7 +21,24 @@ docker run --rm -it --name k8_serv_js --net host -p 3000:3000 \
 -e DB_USER='my_db_user' \
 -e DB_PASS='my_db_secret' \
 -e DB_SCHE='items' \
-poxstone/k8_serv_js:v0.0.01;
+poxstone/k8_serv_js:vj.0.0.1a;
+```
+
+##. Run database and populate
+```bash
+# run container
+docker run --rm -it --name my_db_host -p 3306:3306 \
+-e MYSQL_USER=my_db_user \
+-e MYSQL_PASSWORD=my_db_secret \
+-e MYSQL_DATABASE=items \
+-e MYSQL_ROOT_PASSWORD=my_db_secret \
+-v ../mysql-db:/var/lib/mysql \
+mysql:5.7;
+
+# connect to container
+docker exec -it my_db_host sh;
+
+# paste next script to populate;
 ```
 
 ## Populate DB
@@ -43,5 +60,4 @@ INSERT INTO `items`.`books` (`name`,`cant`) VALUES ("book 4", 3);
 INSERT INTO `items`.`books` (`name`,`cant`) VALUES ("book 5", 25);
 
 SELECT * FROM `items`.`books`;
-
 ```

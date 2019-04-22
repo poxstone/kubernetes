@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8-letsencrypt-res-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: k8-letsencrypt-res-pod
+  template:
+    metadata:
+      labels:
+        app: k8-letsencrypt-res-pod
+    spec:
+      containers: 
+      - image: "gcr.io/xst-dev-001/k8_letsencrypt_res:vl.0.0.1a"
+      #- image: "poxstone/k8_app_py:vl.0.0.1a"
+        name: k8-letsencrypt-res-container
+        env:
+        - name: APP_PORT
+          value: '8000'
+        - name: RESPONSE
+          value: 'jmx9kMc9Y8-qvbmUL...'
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP

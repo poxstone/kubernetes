@@ -1,6 +1,6 @@
 {
   "name": "k8_serv_js",
-  "version": "0.0.01",
+  "version": "0.0.1",
   "description": "simple sql db service",
   "main": "index.js",
   "engines": {
