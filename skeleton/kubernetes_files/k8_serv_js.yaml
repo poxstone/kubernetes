@@ -14,8 +14,8 @@ spec:
         app: k8-serv-js-pod
     spec:
       containers: 
-      - image: "gcr.io/xst-dev-001/k8_serv_js:vj.0.0.1a"
-      #- image: "poxstone/k8_serv_js:vj.0.0.1a"
+      - image: "gcr.io/xst-dev-001/k8_serv_js:vp.0.0.1b"
+      #- image: "poxstone/k8_serv_js:vp.0.0.1b"
         name: k8-serv-js-container
         env:
         - name: APP_PORT
@@ -28,6 +28,8 @@ spec:
           value: 'my_db_secret'
         - name: DB_SCHE
           value: 'items'
+        - name: REDIS_HOST
+          value: 'k8-redis-external-service'
         ports:
         - containerPort: 3000
           name: http

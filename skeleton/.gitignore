@@ -1,7 +1,7 @@
 .idea/*
 .vscode/*
 virtual_env/*
-misql-db/*
+mysql-db/*
 node_modules/*
 lib/*
 *.ws[mnop]

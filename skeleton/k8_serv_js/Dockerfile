@@ -8,7 +8,8 @@ ENV DB_USER='my_db_user'
 ENV DB_PASS='my_db_secret'
 ENV DB_SCHE='items'
 ENV USER='node'
-
+ENV REDIS_HOST='redis'
+ENV REDIS_PORT='6379'
 
 
 RUN mkdir -p $APP_PATH/node_modules && chown -R node:node $APP_PATH

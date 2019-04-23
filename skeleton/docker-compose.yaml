@@ -14,7 +14,7 @@ services:
     - "8080:5000"
     
   k8_serv_js:
-    image: poxstone/k8_serv_js:vj.0.0.1a
+    image: poxstone/k8_serv_js:vp.0.0.1b
     build:
       context: ./k8_serv_js/
     environment:
@@ -24,6 +24,7 @@ services:
     - DB_PASS=my_db_secret
     - DB_SCHE=items
     - USER=node
+    - REDIS_HOST=my_redis_db
     ports:
     - "8081:3000"
     depends_on:
@@ -31,6 +32,7 @@ services:
     # TODO: link borked
     links:
     - my_db_host:my_db_host
+    - my_redis_db:my_redis_db
 
   my_db_host:
     image: "mysql:5.7"
@@ -45,6 +47,11 @@ services:
     - '3306'
     volumes:
     - ./mysql-db:/var/lib/mysql
+  
+  my_redis_db:
+    image: "redis:5.0.3-alpine"
+    ports:
+    - 6379:6379
 
   k8-letsencrypt-res-deployment:
     image: poxstone/k8_letsencrypt_res:vl.0.0.1a

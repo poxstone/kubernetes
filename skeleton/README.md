@@ -12,7 +12,7 @@ docker-compose up;
 ```bash
 PROJECT='';
 VERSION_PY='vp.0.0.1a';
-VERSION_JS='vj.0.0.1a';
+VERSION_JS='vp.0.0.1b';
 VERSION_LETS='vl.0.0.1a';
 CLUSTER='dev-cluster';
 DOMAIN='dev.eforcers.com.co';
