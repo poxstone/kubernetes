@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: k8-kali-sh
+  namespace: default
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: k8-kali-sh-pod
+  template:
+    metadata:
+      labels:
+        app: k8-kali-sh-pod
+    spec:
+      containers: 
+      - image: "gcr.io/xst-dev-001/kali:vk1.0.0b"
+      #- image: "poxstone/xst-dev-001/kali:vk1.0.0b"
+        name: k8-kali-sh-container
+        env:
+        - name: APP_PORT
+          value: '8080'
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+
