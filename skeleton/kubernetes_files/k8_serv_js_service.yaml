@@ -8,7 +8,7 @@ spec:
   - port: 8080
     protocol: TCP
     targetPort: 3000
-  #type: NodePort
-  type: LoadBalancer
+  type: NodePort
+  #type: LoadBalancer
   selector:
     app: k8-serv-js-pod

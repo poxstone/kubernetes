@@ -92,9 +92,12 @@ kubectl apply -f kubernetes_files/k8_serv_js.yaml;
 # deploy service
 kubectl apply -f kubernetes_files/k8_serv_js_service.yaml;
 
-# deploy endpoints/service  external
+# Edit ips and deploy endpoints/service  external
 kubectl apply -f kubernetes_files/k8_cloudsql_external_service.yaml;
 kubectl apply -f kubernetes_files/k8_cloudsql_external_endpoint.yaml;
+
+kubectl apply -f kubernetes_files/k8_redis_external_service.yaml;
+kubectl apply -f kubernetes_files/k8_redis_external_endpoint.yaml;
 ```
 
 ### 5.3 Deploy let's encrypt response
