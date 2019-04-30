@@ -22,7 +22,7 @@ DOMAIN='dev.eforcers.com.co';
 ## 3. Create cluster GKE and get credentials
 ```bash
 # create cluster
-gcloud container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=3 --disk-size "100" --preemptible  --enable-autorepair  --project "${PROJECT}" -q;
+gcloud container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=3 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --project "${PROJECT}" -q;
 
 # get credentials
 gcloud container clusters get-credentials "${CLUSTER}" --project "${PROJECT}";
