@@ -1,0 +1,11 @@
+apiVersion: autoscaling.k8s.io/v1beta1
+kind: VerticalPodAutoscaler
+metadata:
+  name: k8-app-py-vpa
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: k8-app-py-pod
+  updatePolicy:
+    updateMode: "Off"

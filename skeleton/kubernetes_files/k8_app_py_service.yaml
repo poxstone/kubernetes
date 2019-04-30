@@ -11,7 +11,7 @@ metadata:
 spec:
   type: NodePort
   #type: LoadBalancer
-  #loadBalancerIP: "34.73.160.140"
+  loadBalancerIP: "34.73.160.140"
   ports:
   - port: 8080
     protocol: TCP

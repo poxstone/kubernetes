@@ -23,7 +23,8 @@ DOMAIN='dev.eforcers.com.co';
 ## 3. Create cluster GKE and get credentials
 ```bash
 # create cluster
-gcloud container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=3 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --project "${PROJECT}" -q;
+gcloud beta container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=3 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --enable-vertical-pod-autoscaling --project "${PROJECT}" -q;
+# --enable-vertical-pod-autoscaling is beta
 
 # get credentials
 gcloud container clusters get-credentials "${CLUSTER}" --project "${PROJECT}";
@@ -222,7 +223,7 @@ kubectl rollout status deployment k8-app-py-deployment;
 
 ```bash
 IP_EXTERNAL='34.74.161.184';
-poxstone@localhost:skeleton$ for i in {1..220};do curl "http://${IP_EXTERNAL}:8080/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
+for i in {1..220};do curl "http://${IP_EXTERNAL}:8080/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
 ```
 
 ### a.2 Minikube

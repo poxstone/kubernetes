@@ -2,14 +2,14 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: k8-app-ingress
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: my-name-address
+  #annotations:
+  #  kubernetes.io/ingress.global-static-ip-name: my-name-address
 
 spec:
-  tls:
-  - hosts:
-    - dev.eforcers.com.co
-    secretName: k8-app-ssl-secrets
+  #tls:
+  #- hosts:
+  #  - dev.eforcers.com.co
+  #  secretName: k8-app-ssl-secrets
   rules:
   - http:
       paths:

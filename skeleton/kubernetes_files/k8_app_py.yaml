@@ -17,6 +17,10 @@ spec:
       - image: "gcr.io/xst-dev-001/k8_app_py:vp.0.0.1a"
       #- image: "poxstone/k8_app_py:vp.0.0.1a"
         name: k8-app-py-container
+        resources:
+          requests:
+            cpu: 100m
+            memory: 50Mi
         env:
         - name: APP_PORT
           value: '5000'
