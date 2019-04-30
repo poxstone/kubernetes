@@ -30,3 +30,11 @@ spec:
         - containerPort: 5000
           name: http
           protocol: TCP
+        volumeMounts:
+        - mountPath: "/volume-py/"
+          name: app-py-volume
+      volumes:
+      - name: app-py-volume
+        persistentVolumeClaim:
+          claimName: app-py-volume-claim
+          readOnly: false

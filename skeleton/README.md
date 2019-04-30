@@ -1,4 +1,5 @@
 # kubernetes skeleton
+![arch](./architecture/k8_skeleton.svg)
 
 
 ## 1. Local test
