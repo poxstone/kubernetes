@@ -4,8 +4,8 @@ metadata:
   name: k8-app-py-hpa
   namespace: default
 spec:
-  maxReplicas: 6
-  minReplicas: 4
+  maxReplicas: 24
+  minReplicas: 1
   scaleTargetRef:
     apiVersion: extensions/v1beta1
     kind: Deployment

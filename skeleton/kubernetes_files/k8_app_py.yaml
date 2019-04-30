@@ -25,9 +25,9 @@ spec:
         - name: APP_PORT
           value: '5000'
         - name: WORKERS
-          value: '1'
+          value: '3'
         - name: TIMEOUT
-          value: '120'
+          value: '240'
         - name: VERSION_DEP
           value: 'vp.0.0.1a'
         ports:

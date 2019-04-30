@@ -22,8 +22,8 @@ DOMAIN='dev.eforcers.com.co';
 
 ## 3. Create cluster GKE and get credentials
 ```bash
-# create cluster
-gcloud beta container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=3 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --enable-vertical-pod-autoscaling --project "${PROJECT}" -q;
+# create cluster (review autoscaling nodes)
+gcloud container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=3 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --enable-autoscaling --min-nodes "2" --max-nodes "5" --project "${PROJECT}" -q;
 # --enable-vertical-pod-autoscaling is beta
 
 # get credentials
@@ -72,6 +72,23 @@ docker push gcr.io/${PROJECT}/k8_letsencrypt_res:${VERSION_LETS};
 
 ## 5. Deploy to GKE
 
+### 5.0 deploy services need
+
+```bash
+# volume
+kubectl apply -f kubernetes_files/k8_app_py_volume_claim.yaml;
+
+# Edit ips and deploy endpoints/service  external
+kubectl apply -f kubernetes_files/k8_cloudsql_external_service.yaml;
+kubectl apply -f kubernetes_files/k8_cloudsql_external_endpoint.yaml;
+
+kubectl apply -f kubernetes_files/k8_redis_external_service.yaml;
+kubectl apply -f kubernetes_files/k8_redis_external_endpoint.yaml;
+
+#
+
+```
+
 ### 5.1 Deploy py
 ```bash
 # deploy 
@@ -93,13 +110,6 @@ kubectl apply -f kubernetes_files/k8_serv_js.yaml;
 
 # deploy service
 kubectl apply -f kubernetes_files/k8_serv_js_service.yaml;
-
-# Edit ips and deploy endpoints/service  external
-kubectl apply -f kubernetes_files/k8_cloudsql_external_service.yaml;
-kubectl apply -f kubernetes_files/k8_cloudsql_external_endpoint.yaml;
-
-kubectl apply -f kubernetes_files/k8_redis_external_service.yaml;
-kubectl apply -f kubernetes_files/k8_redis_external_endpoint.yaml;
 ```
 
 ### 5.3 Deploy let's encrypt response
@@ -109,6 +119,9 @@ kubectl apply -f kubernetes_files/k8_letsencrypt_res.yaml;
 
 # deploy service
 kubectl apply -f kubernetes_files/k8_letsencrypt_res_service.yaml;
+
+# load balancer config
+kubectl apply -f kubernetes_files/k8_app_ingress_backendconfig.yaml;
 ```
 
 
@@ -222,8 +235,8 @@ kubectl rollout status deployment k8-app-py-deployment;
 - First pos is scaling, later nodes is scaling
 
 ```bash
-IP_EXTERNAL='34.74.161.184';
-for i in {1..220};do curl "http://${IP_EXTERNAL}:8080/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
+HOST='http://35.244.246.126:8080';
+for i in {1..220};do curl -k "${HOST}/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
 ```
 
 ### a.2 Minikube

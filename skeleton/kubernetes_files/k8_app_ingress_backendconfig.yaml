@@ -3,7 +3,7 @@ kind: BackendConfig
 metadata:
   name: k8-app-ingress-backendconfig
 spec:
-  timeoutSec: 120
+  timeoutSec: 240
   connectionDraining:
     drainingTimeoutSec: 60
   #sessionAffinity:
