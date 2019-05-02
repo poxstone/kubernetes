@@ -23,7 +23,7 @@ DOMAIN='dev.eforcers.com.co';
 ## 3. Create cluster GKE and get credentials
 ```bash
 # create cluster (review autoscaling nodes)
-gcloud container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=3 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --enable-autoscaling --min-nodes "2" --max-nodes "5" --project "${PROJECT}" -q;
+gcloud container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=3 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --enable-autoscaling --min-nodes "2" --max-nodes "5" --zone us-east1-b --project "${PROJECT}" -q;
 # --enable-vertical-pod-autoscaling is beta
 
 # get credentials
