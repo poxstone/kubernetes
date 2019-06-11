@@ -3,38 +3,34 @@
 
 ## 1. Create sql and redis instances
 #### Cloud SQL and REDIS
-  ```bash
-  gcloud init;
-  export PROJECT="$(gcloud config get-value project)";
-  export REGION="us-east1";
-  export ZONE="${REGION}-b";
-  export SQL_NAME="k8-sql";
-  export SQL_PASS="my_db_secret"; # << CHANGE
-  export REDIS_NAME="k8-redis";
+```bash
+gcloud init;
+export PROJECT="$(gcloud config get-value project)";
+export REGION="us-east1";
+export ZONE="${REGION}-b";
+export SQL_NAME="k8-sql6";
+export SQL_PASS="my_db_secret"; # << CHANGE
+export REDIS_NAME="k8-redis";
 
-  # create sql instance
-  gcloud beta sql instances create "${SQL_NAME}" --zone="${ZONE}" --project="${PROJECT}" --root-password="${SQL_PASS}" --no-assign-ip --network="default";
-  # add external ingress
-  gcloud beta sql instances patch "${SQL_NAME}" --assign-ip --project="${PROJECT}" --authorized-networks=$(curl ipinfo.io/ip) -q;
-  # get internal sql ip
-  gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -ne "type: PRIVATE" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}';
-  # get external ip
-  gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -ne "type: PRIMARY" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}';
+# create sql instance
+gcloud beta sql instances create "${SQL_NAME}" --zone="${ZONE}" --project="${PROJECT}" --root-password="${SQL_PASS}" --no-assign-ip --network="default";
+# add external ingress
+gcloud beta sql instances patch "${SQL_NAME}" --assign-ip --project="${PROJECT}" --authorized-networks=$(curl ipinfo.io/ip) -q;
+# get internal sql ip
+gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -ne "type: PRIVATE" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}';
+# get external ip
+gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -ne "type: PRIMARY" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}';
 
-  # create redis instance
-  gcloud redis instances create "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}";
-  # get ip
-  gcloud redis instances describe "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}" | grep host | awk -F ':' '{print($2)}';
+# create redis instance
+gcloud redis instances create "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}";
+# get ip
+gcloud redis instances describe "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}" | grep host | awk -F ':' '{print($2)}';
 
-  # populate sql
-  export SQL_IP="$(gcloud sql instances describe ${SQL_NAME} --project=${PROJECT} | grep -B1 -ne "type: PRIMARY" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}')";
-  mysql -u "root" -h "${SQL_IP}" -p"${SQL_PASS}" < "./k8_serv_js/items.sql";
+# populate sql
+export SQL_IP="$(gcloud sql instances describe ${SQL_NAME} --project=${PROJECT} | grep -B1 -ne "type: PRIMARY" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}')";
+mysql -u "root" -h "${SQL_IP}" -p"${SQL_PASS}" < "./k8_serv_js/items.sql";
 
-  # create local images
-  docker-compose up;
-  # stop [ctrl + c]
-
-  ```
+```
 
 ## 2. Deploy
 > **Note:** Edit **deploy.sh** and change DB connection (SQL|REDIS: ips, user, pass...)
@@ -56,24 +52,32 @@ curl -X GET "http://${IP_INGRESS}/redis/";
 # stress test
 #curl -X GET "http://${IP_INGRESS}/?sleep=10&&cpus=5";
 for i in {1..220};do curl -k "http://${IP_INGRESS}/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
-
 ```
 
+## Scaling test
+> **prepare k8_app_py_service.yaml** comment all volume parameters
+```bash
+kubectl apply -f "kubernetes_files/k8_app.yaml";
+kubectl apply -f "kubernetes_files/k8_app_py_hpa.yaml";
 
+# stress test
+IP_INGRESS="$(kubectl get ingress | grep k8-app-ingress | awk -F ' ' '{print($3)}')"; 
+#curl -X GET "http://${IP_INGRESS}/?sleep=10&&cpus=5";
+for i in {1..220};do curl -k "http://${IP_INGRESS}/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
+```
 
+## Add let's encrypt cert 
 > Note: Crate Register A to External IP 
-
-#### 6.1.0 Deploy backend (optional)
-> If you want change timeout LoadBalancer interconnection, you will have that implements backend config "k8_app_ingress_backendconfig.yaml" and add anotations in each service "k8_app_py_service.yaml"
+- Get Ingress IP
 ```bash
-# deploy ingress
-kubectl apply -f kubernetes_files/kubernetes_files/k8_app_ingress_backendconfig.yaml;
-# re-deploy service
-kubectl apply -f kubernetes_files/kubernetes_files/k8_app_py_service.yaml;
+IP_INGRESS="$(kubectl get ingress | grep k8-app-ingress | awk -F ' ' '{print($3)}')"; 
+echo $IP_INGRESS;
 ```
+- Create Register A to IP TTL 30 seg.
+- Create ssl cert
 
-### 6.2 Create certs let's encrypt
 ```bash
+export DOMAIN="dev.mydomain.com.co";
 # create alias command
 alias cerbot="docker run --rm -it -p 443:443 -v ${HOME}/cerbot:/etc/letsencrypt -v ${HOME}/cerbot/log:/var/log/letsencrypt quay.io/letsencrypt/letsencrypt:latest";
 
@@ -92,12 +96,10 @@ kubectl apply -f kubernetes_files/k8_letsencrypt_res.yaml;
 
 - Continue with validation
 - Deploy ssl to kubernetes secrets 
-
-
-### 6.3 deploy keys
+- Deploy keys
 ```bash
 # set vars
-DOMAIN_SSL="${HOME}/cerbot/archive/${DOMAIN}/";
+export DOMAIN_SSL="${HOME}/cerbot/archive/${DOMAIN}/";
 
 # add permissions
 sudo chown -R $(whoami):$(whoami) "${HOME}/cerbot";
@@ -117,7 +119,6 @@ data:
   - tls.crt = LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0t...
   - tls.key = LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0t...
 ```
-
 - Deploy "k8_app_ssl_secrets.yaml"
 ```bash
 kubectl apply -f kubernetes_files/k8_app_ssl_secrets.yaml;
@@ -136,7 +137,8 @@ spec:
 kubectl apply -f kubernetes_files/k8_app_ingress.yaml;
 ```
 
-## a. Utils
+
+# a. Utils
 
 ### a.1 Kubernetes commands
 #### a.1.1 update only pod image

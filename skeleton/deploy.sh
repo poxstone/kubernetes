@@ -80,7 +80,7 @@ kubectl apply -f "kubernetes_files/k8_redis_external_endpoint.yaml";
 # deploy app services
 kubectl apply -f "kubernetes_files/k8_app_py.yaml";
 kubectl apply -f "kubernetes_files/k8_app_py_service.yaml";
-kubectl apply -f "kubernetes_files/k8_app_py_hpa.yaml";
+#kubectl apply -f "kubernetes_files/k8_app_py_hpa.yaml";
 
 kubectl apply -f "kubernetes_files/k8_serv_js.yaml";
 kubectl apply -f "kubernetes_files/k8_serv_js_service.yaml";
