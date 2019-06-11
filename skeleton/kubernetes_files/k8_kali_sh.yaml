@@ -14,7 +14,7 @@ spec:
         app: k8-kali-sh-pod
     spec:
       containers: 
-      - image: "gcr.io/xst-dev-001/kali:vk1.0.0b"
+      - image: "gcr.io/steam-boulevard-212521/kali:vk1.0.0b"
       #- image: "poxstone/xst-dev-001/kali:vk1.0.0b"
         name: k8-kali-sh-container
         env:

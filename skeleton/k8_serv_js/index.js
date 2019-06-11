@@ -1,6 +1,6 @@
 var express = require('express');
 var mysql = require('mysql');
-var redis = require("redis");
+var redis = require('redis');
 
 const ENV      = process.env;
 const PORT     = ENV.APP_PORT || 3000
@@ -31,7 +31,7 @@ app.get('/sql', (req, res) => {
   console.info('GET /sql');
   var limit = req.query.limit ? req.query.limit : 3;
   var query = `SELECT * FROM ${dbConfig.db}.books LIMIT ${limit};`;
-  var dummy = '{"id":1, "name":"dummy 1", "cant": 2}'
+  var dummy = '{"id":1, "name":"dummy 1", "cant": 2}';
   
   try{
     sqlCli.query(query, (err, rows, fields) => {

@@ -14,7 +14,7 @@ spec:
         app: k8-letsencrypt-res-pod
     spec:
       containers: 
-      - image: "gcr.io/xst-dev-001/k8_letsencrypt_res:vl.0.0.1a"
+      - image: "gcr.io/steam-boulevard-212521/k8_letsencrypt_res:vl.0.0.1a"
       #- image: "poxstone/k8_app_py:vl.0.0.1a"
         name: k8-letsencrypt-res-container
         env:

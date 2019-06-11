@@ -14,7 +14,7 @@ spec:
         app: k8-serv-js-pod
     spec:
       containers: 
-      - image: "gcr.io/xst-dev-001/k8_serv_js:vp.0.0.1b"
+      - image: "gcr.io/steam-boulevard-212521/k8_serv_js:vp.0.0.1b"
       #- image: "poxstone/k8_serv_js:vp.0.0.1b"
         name: k8-serv-js-container
         env:
@@ -23,9 +23,9 @@ spec:
         - name: DB_HOST
           value: 'k8-cloudsql-external-service'
         - name: DB_USER
-          value: 'my_db_user'
+          value: "root"
         - name: DB_PASS
-          value: 'my_db_secret'
+          value: "my_db_secret"
         - name: DB_SCHE
           value: 'items'
         - name: REDIS_HOST

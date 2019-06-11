@@ -1,139 +1,66 @@
 # kubernetes skeleton
 ![arch](./architecture/k8_skeleton.svg)
 
+## 1. Create sql and redis instances
+#### Cloud SQL and REDIS
+  ```bash
+  gcloud init;
+  export PROJECT="$(gcloud config get-value project)";
+  export REGION="us-east1";
+  export ZONE="${REGION}-b";
+  export SQL_NAME="k8-sql";
+  export SQL_PASS="my_db_secret"; # << CHANGE
+  export REDIS_NAME="k8-redis";
 
-## 1. Local test
+  # create sql instance
+  gcloud beta sql instances create "${SQL_NAME}" --zone="${ZONE}" --project="${PROJECT}" --root-password="${SQL_PASS}" --no-assign-ip --network="default";
+  # add external ingress
+  gcloud beta sql instances patch "${SQL_NAME}" --assign-ip --project="${PROJECT}" --authorized-networks=$(curl ipinfo.io/ip) -q;
+  # get internal sql ip
+  gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -ne "type: PRIVATE" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}';
+  # get external ip
+  gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -ne "type: PRIMARY" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}';
+
+  # create redis instance
+  gcloud redis instances create "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}";
+  # get ip
+  gcloud redis instances describe "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}" | grep host | awk -F ':' '{print($2)}';
+
+  # populate sql
+  export SQL_IP="$(gcloud sql instances describe ${SQL_NAME} --project=${PROJECT} | grep -B1 -ne "type: PRIMARY" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}')";
+  mysql -u "root" -h "${SQL_IP}" -p"${SQL_PASS}" < "./k8_serv_js/items.sql";
+
+  # create local images
+  docker-compose up;
+  # stop [ctrl + c]
+
+  ```
+
+## 2. Deploy
+> **Note:** Edit **deploy.sh** and change DB connection (SQL|REDIS: ips, user, pass...)
 ```bash
 # test app and build images
-docker-compose up;
+bash deploy.sh;
 ```
 
-
-## 2. Set project and version variables
-```bash
-PROJECT='';
-VERSION_PY='vp.0.0.1a';
-VERSION_JS='vp.0.0.1b';
-VERSION_LETS='vl.0.0.1a';
-CLUSTER='dev-cluster';
-DOMAIN='dev.eforcers.com.co';
-```
-
-
-## 3. Create cluster GKE and get credentials
-```bash
-# create cluster (review autoscaling nodes)
-gcloud container clusters create "${CLUSTER}" --machine-type 'n1-standard-1' --num-nodes=2 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --enable-autoscaling --min-nodes "2" --max-nodes "5" --zone us-east1-b --project "${PROJECT}" -q;
-# --enable-vertical-pod-autoscaling is beta
-
-# get credentials
-gcloud container clusters get-credentials "${CLUSTER}" --project "${PROJECT}";
-```
-
-
-## 4. Deploy images to gcr.io
-
-### 4.1 Deploy py
-```bash
-# docker login
-gcloud auth configure-docker -q;
-
-# change tags name
-docker tag "poxstone/k8_app_py:${VERSION_PY}" "gcr.io/${PROJECT}/k8_app_py:${VERSION_PY}";
-
-# deploy image
-docker push "gcr.io/${PROJECT}/k8_app_py:${VERSION_PY}";
-```
-
-### 4.2 Deploy js
-```bash
-# docker login
-gcloud auth configure-docker -q;
-
-# change tags name
-docker tag "poxstone/k8_serv_js:${VERSION_JS}" "gcr.io/${PROJECT}/k8_serv_js:${VERSION_JS}";
-
-# deploy image
-docker push "gcr.io/${PROJECT}/k8_serv_js:${VERSION_JS}";
-```
-
-### 4.3 Deploy let's encrypt response
-```bash
-# docker login
-gcloud auth configure-docker -q;
-
-# change tags name
-docker tag poxstone/k8_letsencrypt_res:vl.0.0.1a gcr.io/${PROJECT}/k8_letsencrypt_res:${VERSION_LETS};
-
-# deploy image
-docker push gcr.io/${PROJECT}/k8_letsencrypt_res:${VERSION_LETS};
-```
-
-
-## 5. Deploy to GKE
-
-### 5.0 deploy services need
+## 3. Review app
 
 ```bash
-# volume
-kubectl apply -f kubernetes_files/k8_app_py_volume_claim.yaml;
+IP_INGRESS="$(kubectl get ingress | grep k8-app-ingress | awk -F ' ' '{print($3)}')";
+# sql query
+curl -X GET "http://${IP_INGRESS}/sql/?limit=5";
 
-# Edit ips and deploy endpoints/service  external
-kubectl apply -f kubernetes_files/k8_cloudsql_external_service.yaml;
-kubectl apply -f kubernetes_files/k8_cloudsql_external_endpoint.yaml;
+# redis
+curl -X GET "http://${IP_INGRESS}/redis/";
 
-kubectl apply -f kubernetes_files/k8_redis_external_service.yaml;
-kubectl apply -f kubernetes_files/k8_redis_external_endpoint.yaml;
-
-#
+# stress test
+#curl -X GET "http://${IP_INGRESS}/?sleep=10&&cpus=5";
+for i in {1..220};do curl -k "http://${IP_INGRESS}/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
 
 ```
 
-### 5.1 Deploy py
-```bash
-# deploy 
-kubectl apply -f kubernetes_files/k8_app_py.yaml;
-
-# deploy service
-kubectl apply -f kubernetes_files/k8_app_py_service.yaml;
-
-# deploy scaling - if you want create replication scaling apply hpa
-kubectl apply -f kubernetes_files/k8_app_py_hpa.yaml;
-```
-
-### 5.2 Deploy js
-> **Note**: Change internal ip in "k8_cloudsql_external_endpoint.yaml" fo cloudsql service
-
-```bash
-# deploy 
-kubectl apply -f kubernetes_files/k8_serv_js.yaml;
-
-# deploy service
-kubectl apply -f kubernetes_files/k8_serv_js_service.yaml;
-```
-
-### 5.3 Deploy let's encrypt response
-```bash
-# deploy k8-serv-js-deployment-5c84bc7fcb-npwwz
-kubectl apply -f kubernetes_files/k8_letsencrypt_res.yaml;
-
-# deploy service
-kubectl apply -f kubernetes_files/k8_letsencrypt_res_service.yaml;
-
-# load balancer config
-kubectl apply -f kubernetes_files/k8_app_ingress_backendconfig.yaml;
-```
 
 
-## 6. Deploy ingress - Load balancer HTTP(S)
-
-> Note: Ensure that "k8-app-py-service" "k8-serv-js-service" and "k8-letsencrypt-res-service" havea type NodePort
-
-### 6.1 Deploy ingress
-```bash
-# deploy ingress
-kubectl apply -f kubernetes_files/kubernetes_files/k8_app_ingress.yaml;
-```
 > Note: Crate Register A to External IP 
 
 #### 6.1.0 Deploy backend (optional)

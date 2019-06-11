@@ -14,7 +14,7 @@ spec:
         app: k8-app-py-pod
     spec:
       containers: 
-      - image: "gcr.io/xst-dev-001/k8_app_py:vp.0.0.1a"
+      - image: "gcr.io/steam-boulevard-212521/k8_app_py:vp.0.0.1a"
       #- image: "poxstone/k8_app_py:vp.0.0.1a"
         name: k8-app-py-container
         resources:
