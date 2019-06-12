@@ -1,5 +1,6 @@
 # kubernetes skeleton
-![arch](./architecture/k8_skeleton.svg)
+![arch](./architecture/k8_infrastructure.svg)
+![service](./architecture/k8_services.svg)
 
 
 
