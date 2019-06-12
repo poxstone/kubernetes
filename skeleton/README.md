@@ -15,10 +15,22 @@ export ZONE="${REGION}-b";
 export SQL_NAME="k8-sql";
 export SQL_PASS="my_db_secret"; # << CHANGE
 export REDIS_NAME="k8-redis";
+export CLUSTER="dev-cluster";
 
+
+# enable apis networking
 gcloud services enable servicenetworking.googleapis.com --project="${PROJECT}";
 
-# create sql instance
+
+# create redis instance
+gcloud redis instances create "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}" -q --async;
+gcloud beta sql instances create "${SQL_NAME}" --zone="${ZONE}" --project="${PROJECT}" --authorized-networks=$(curl ipinfo.io/ip) --root-password="${SQL_PASS}" --assign-ip --async;
+gcloud container clusters create "${CLUSTER}" --machine-type "n1-standard-1" --num-nodes=2 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --enable-autoscaling --min-nodes "2" --max-nodes "5" --zone us-east1-b --project "${PROJECT}" -q --async;
+
+# get REDIS ip
+gcloud redis instances describe "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}" | grep host | awk -F ':' '{print($2)}';
+
+# create CLOUDSQL instance
 gcloud beta sql instances create "${SQL_NAME}" --zone="${ZONE}" --project="${PROJECT}" --authorized-networks=$(curl ipinfo.io/ip) --root-password="${SQL_PASS}" --assign-ip;
 # add external ingress
 gcloud beta sql instances patch "${SQL_NAME}" --assign-ip --project="${PROJECT}" --authorized-networks=$(curl ipinfo.io/ip) -q;
@@ -28,10 +40,6 @@ gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -n
 # get external ip
 gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -ne "type: PRIMARY" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}';
 
-# create redis instance
-gcloud redis instances create "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}";
-# get ip
-gcloud redis instances describe "${REDIS_NAME}" --region="${REGION}" --project="${PROJECT}" | grep host | awk -F ':' '{print($2)}';
 
 # populate sql
 export SQL_IP="$(gcloud sql instances describe ${SQL_NAME} --project=${PROJECT} | grep -B1 -ne "type: PRIMARY" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}')";
@@ -68,7 +76,7 @@ kubectl apply -f "kubernetes_files/k8_app_py.yaml";
 kubectl apply -f "kubernetes_files/k8_app_py_hpa.yaml";
 
 # stress test
-IP_INGRESS="$(kubectl get ingress | grep k8-app-ingress | awk -F ' ' '{print($3)}')"; 
+IP_INGRESS="$(kubectl get ingress | grep k8-app-ingress | awk -F ' ' '{print($3)}')";
 #curl -X GET "http://${IP_INGRESS}/?sleep=10&&cpus=5";
 for i in {1..150};do curl -k "http://${IP_INGRESS}/?sleep=8&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
 ```
@@ -77,7 +85,7 @@ for i in {1..150};do curl -k "http://${IP_INGRESS}/?sleep=8&cpus=4&date=$(date -
 > Note: Crate Register A to External IP 
 - Get Ingress IP
 ```bash
-IP_INGRESS="$(kubectl get ingress | grep k8-app-ingress | awk -F ' ' '{print($3)}')"; 
+IP_INGRESS="$(kubectl get ingress | grep k8-app-ingress | awk -F ' ' '{print($3)}')";
 echo $IP_INGRESS;
 ```
 - Create Register A to IP TTL 30 seg.

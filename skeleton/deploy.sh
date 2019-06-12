@@ -58,7 +58,7 @@ gcloud auth configure-docker -q;
 # create cluster
 gcloud container clusters create "${CLUSTER}" --machine-type "n1-standard-1" --num-nodes=2 --disk-size "100" --preemptible  --enable-autorepair --enable-ip-alias --enable-autoscaling --min-nodes "2" --max-nodes "5" --zone us-east1-b --project "${PROJECT}" -q;
 # get cluster credentials
-gcloud container clusters get-credentials "${CLUSTER}" --project "${PROJECT}";
+gcloud container clusters get-credentials "${CLUSTER}" --project "${PROJECT}" --zone="${ZONE}";
 
 
 # upload image gcr
