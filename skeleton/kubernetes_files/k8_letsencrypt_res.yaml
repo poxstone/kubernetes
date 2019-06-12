@@ -21,7 +21,7 @@ spec:
         - name: APP_PORT
           value: '8000'
         - name: RESPONSE
-          value: 'KS7USdiTWU_UbhPvm-zcsuN8h1OTM2-KOs9d8HPLD-o.WK-T4MQfFG0o-n_0PJp4DecFHaUPdHsXy8Q9dPMo2T8'
+          value: 'KS7USdiTWU_UbhPvm...'
         ports:
         - containerPort: 8000
           name: http

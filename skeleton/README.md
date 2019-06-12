@@ -8,7 +8,7 @@ gcloud init;
 export PROJECT="$(gcloud config get-value project)";
 export REGION="us-east1";
 export ZONE="${REGION}-b";
-export SQL_NAME="k8-sql6";
+export SQL_NAME="k8-sql";
 export SQL_PASS="my_db_secret"; # << CHANGE
 export REDIS_NAME="k8-redis";
 
@@ -51,22 +51,22 @@ curl -X GET "http://${IP_INGRESS}/redis/";
 
 # stress test
 #curl -X GET "http://${IP_INGRESS}/?sleep=10&&cpus=5";
-for i in {1..220};do curl -k "http://${IP_INGRESS}/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
+for i in {1..20};do curl -k "http://${IP_INGRESS}/?sleep=10&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
 ```
 
-## Scaling test
-> **prepare k8_app_py_service.yaml** comment all volume parameters
+## 4. Apply hpa Scaling test
+> **prepare k8_app_py.yaml** comment all volume parameters
 ```bash
-kubectl apply -f "kubernetes_files/k8_app.yaml";
+kubectl apply -f "kubernetes_files/k8_app_py.yaml";
 kubectl apply -f "kubernetes_files/k8_app_py_hpa.yaml";
 
 # stress test
 IP_INGRESS="$(kubectl get ingress | grep k8-app-ingress | awk -F ' ' '{print($3)}')"; 
 #curl -X GET "http://${IP_INGRESS}/?sleep=10&&cpus=5";
-for i in {1..220};do curl -k "http://${IP_INGRESS}/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
+for i in {1..150};do curl -k "http://${IP_INGRESS}/?sleep=8&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
 ```
 
-## Add let's encrypt cert 
+## 5. Add let's encrypt cert 
 > Note: Crate Register A to External IP 
 - Get Ingress IP
 ```bash
@@ -158,14 +158,6 @@ kubectl get hpa;
 kubectl rollout history deployment k8-app-py-deployment;
 kubectl edit deployment k8-app-py-deployment;
 kubectl rollout status deployment k8-app-py-deployment;
-```
-
-#### a.1.4 curl to scaling
-- First pos is scaling, later nodes is scaling
-
-```bash
-HOST='http://35.244.246.126:8080';
-for i in {1..220};do curl -k "${HOST}/?sleep=3&cpus=4&date=$(date -u '+%Y-%m-%d_%H:%M:%S.%N')-$i" & date;done;
 ```
 
 ### a.2 Minikube
