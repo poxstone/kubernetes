@@ -1,8 +1,12 @@
 # kubernetes skeleton
 ![arch](./architecture/k8_skeleton.svg)
 
+
+
 ## 1. Create sql and redis instances
-#### Cloud SQL and REDIS
+Enable Apis
+  - Networking API
+#### 1.1Cloud SQL and REDIS
 ```bash
 gcloud init;
 export PROJECT="$(gcloud config get-value project)";
@@ -12,10 +16,13 @@ export SQL_NAME="k8-sql";
 export SQL_PASS="my_db_secret"; # << CHANGE
 export REDIS_NAME="k8-redis";
 
+gcloud services enable servicenetworking.googleapis.com --project="${PROJECT}";
+
 # create sql instance
-gcloud beta sql instances create "${SQL_NAME}" --zone="${ZONE}" --project="${PROJECT}" --root-password="${SQL_PASS}" --no-assign-ip --network="default";
+gcloud beta sql instances create "${SQL_NAME}" --zone="${ZONE}" --project="${PROJECT}" --authorized-networks=$(curl ipinfo.io/ip) --root-password="${SQL_PASS}" --assign-ip;
 # add external ingress
 gcloud beta sql instances patch "${SQL_NAME}" --assign-ip --project="${PROJECT}" --authorized-networks=$(curl ipinfo.io/ip) -q;
+# GET TO UI AND ASSIGN PRIVATE IP
 # get internal sql ip
 gcloud sql instances describe "${SQL_NAME}" --project="${PROJECT}" | grep -B1 -ne "type: PRIVATE" | grep -ne "ipAddress" | awk -F ': ' '{print($2)}';
 # get external ip
